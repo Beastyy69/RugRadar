@@ -1,0 +1,212 @@
+@import "tailwindcss";
+
+/*
+ * RugRadar design tokens.
+ *
+ * Single source of truth for the brand's colour, type, elevation and motion.
+ * Tailwind v4's @theme emits each token as a CSS custom property on :root
+ * AND generates a matching utility, so `--color-surface-primary` is usable as
+ * `bg-surface-primary`, `--font-display` as `font-display`, and so on.
+ *
+ * Every name here is NEW - none override a Tailwind default (--font-sans,
+ * --radius-*, --shadow-sm/md/lg, --spacing). That is deliberate: the scanner
+ * and history pages still use Tailwind's stock palette, and overriding a
+ * default would silently restyle them. Once they are restyled onto these
+ * tokens, the defaults can be taken over too.
+ *
+ * Aesthetic: premium cybersecurity intelligence - dark, high contrast,
+ * calm. One brand accent; semantic colour only where it reports real status.
+ */
+@theme {
+  /* ---- Typography ------------------------------------------------- */
+  /* Loaded from Google Fonts in index.html; each falls back to a system
+     font so text is readable before (or without) the download. */
+  --font-display: "Space Grotesk", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Inter", "Segoe UI", system-ui, sans-serif;
+  /* Addresses and other character-exact technical values only. */
+  --font-technical: "JetBrains Mono", "Cascadia Mono", "Consolas", ui-monospace, monospace;
+  /* Large display headlines need tighter leading than body copy. */
+  --leading-display: 1.05;
+
+  /* ---- Backgrounds ------------------------------------------------ */
+  --color-bg-primary: #080b11;
+  --color-bg-secondary: #0c111a;
+  --color-bg-tertiary: #111826;
+
+  /* ---- Surfaces --------------------------------------------------- */
+  --color-surface-primary: #101724;
+  --color-surface-secondary: #151e2e;
+  --color-surface-elevated: #1b2637;
+  --color-surface-overlay: #0b0f17d9;
+
+  /* ---- Borders ---------------------------------------------------- */
+  --color-border-subtle: #1b2434;
+  --color-border-default: #253247;
+  --color-border-strong: #3a4c68;
+
+  /* ---- Text ------------------------------------------------------- */
+  /* Every text token clears 4.5:1 against all background and surface
+     tokens above (disabled is exempt from WCAG, but still clears 3:1). */
+  --color-text-primary: #e9eef7;
+  --color-text-secondary: #a2b1c6;
+  --color-text-tertiary: #8091a9;
+  --color-text-disabled: #647897;
+
+  /* ---- Brand ------------------------------------------------------ */
+  --color-brand-primary: #2f81f7;
+  --color-brand-secondary: #58a6ff;
+  --color-brand-muted: #16233a;
+
+  /* ---- Semantic status -------------------------------------------- */
+  /* Light enough to be used as text as well as fills. */
+  --color-success: #3fc08a;
+  --color-warning: #e5a84a;
+  --color-danger: #f97066;
+  --color-info: #58a6ff;
+
+  /* ---- Risk ------------------------------------------------------- */
+  /* The only colours allowed to express risk, anywhere. "unknown" is the
+     scorer's honest answer when evidence is missing - neutral, not green. */
+  --color-risk-safe: var(--color-success);
+  --color-risk-low: #4fb6a0;
+  --color-risk-medium: var(--color-warning);
+  --color-risk-high: var(--color-danger);
+  --color-risk-critical: #ff3b3b;
+  --color-risk-unknown: var(--color-text-tertiary);
+
+  /* ---- Glow ------------------------------------------------------- */
+  /* A special effect, never a default card style: reserved for the primary
+     call to action, an interactive panel under the cursor, and a risk
+     verdict landing. */
+  --shadow-glow-brand: 0 0 32px -8px rgb(47 129 247 / 0.5);
+  --shadow-glow-danger: 0 0 32px -8px rgb(249 112 102 / 0.45);
+  /* Soft halo around the brand-coloured headline text. Kept faint: it gives
+     the blue words presence without turning into neon. */
+  --drop-shadow-glow-brand: 0 0 22px rgb(47 129 247 / 0.24);
+
+  /* ---- Elevation -------------------------------------------------- */
+  /* Deep, soft shadow for a panel that floats in 3D space above the page. */
+  --shadow-float: 0 50px 90px -40px rgb(0 0 0 / 0.9), 0 18px 40px -24px rgb(0 0 0 / 0.7);
+  /* Card-scale version for a panel lifted a few px off the page on hover. */
+  --shadow-lift: 0 24px 44px -22px rgb(0 0 0 / 0.85), 0 8px 18px -10px rgb(0 0 0 / 0.55);
+
+  /* ---- Motion ----------------------------------------------------- */
+  /* Mirrored in src/lib/motion.js for Framer Motion, which needs plain JS
+     values. Change both together. */
+  --duration-fast: 120ms;
+  --duration-normal: 200ms;
+  --duration-slow: 400ms;
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* ---- Background effects ----------------------------------------- */
+  --grid-size: 40px;
+  --color-grid-line: rgb(255 255 255 / 0.028);
+  /* Fainter grid for application screens, where content must dominate. */
+  --color-grid-line-subtle: rgb(255 255 255 / 0.016);
+}
+
+/*
+ * Page canvas for the landing page: flat base colour, one faint radial brand
+ * light at the top, and a low-opacity grid suggesting network structure.
+ * Static on purpose - the radar sweep is the page's only looping motion.
+ */
+@utility bg-landing-canvas {
+  background-color: var(--color-bg-primary);
+  background-image:
+    radial-gradient(
+      60rem 36rem at 70% -6rem,
+      color-mix(in oklab, var(--color-brand-primary) 11%, transparent),
+      transparent 70%
+    ),
+    linear-gradient(to right, var(--color-grid-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--color-grid-line) 1px, transparent 1px);
+  background-size:
+    100% 100%,
+    var(--grid-size) var(--grid-size),
+    var(--grid-size) var(--grid-size);
+}
+
+/*
+ * Page canvas for application screens (scanner, history). Same language as
+ * the landing canvas - base colour, one brand light, grid - but quieter:
+ * the light is dimmer and further off, and the grid is fainter, because
+ * here the user is reading results, not being sold to. Never animated.
+ */
+@utility bg-app-canvas {
+  background-color: var(--color-bg-primary);
+  background-image:
+    radial-gradient(
+      60rem 30rem at 50% -12rem,
+      color-mix(in oklab, var(--color-brand-primary) 7%, transparent),
+      transparent 70%
+    ),
+    linear-gradient(to right, var(--color-grid-line-subtle) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--color-grid-line-subtle) 1px, transparent 1px);
+  background-size:
+    100% 100%,
+    var(--grid-size) var(--grid-size),
+    var(--grid-size) var(--grid-size);
+}
+
+/* The radar sweep's wedge: transparent for most of the turn, brightening
+   toward the leading edge. Rotated by Framer Motion in RadarSweep.jsx. */
+@utility radar-sweep {
+  background-image: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    transparent 300deg,
+    color-mix(in oklab, var(--color-brand-primary) 30%, transparent) 360deg
+  );
+}
+
+/* Fades a decorative layer out toward its edges so it never ends in a hard
+   line against the canvas. */
+@utility mask-radial-fade {
+  mask-image: radial-gradient(closest-side, black 55%, transparent);
+}
+
+/* Gradient-filled text. With tight display leading, descenders (p, y) hang
+   below the element's box, and background-clip:text would cut them off -
+   so the paint box is extended downward, and the negative margin cancels it
+   so layout doesn't move. */
+@utility text-gradient-clip {
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  padding-bottom: 0.14em;
+  margin-bottom: -0.14em;
+}
+
+/* Text caret shown briefly after the hero headline types in. Sized in em so
+   it always matches the headline's font size. */
+@utility caret-bar {
+  display: inline-block;
+  width: 3px;
+  height: 0.78em;
+  margin-left: 0.08em;
+  vertical-align: -0.04em;
+  border-radius: 2px;
+  background-color: var(--color-brand-secondary);
+}
+
+/* Lets an overlay layer take its parent card's corner radius, whatever it
+   is, so one interactive card component works for every card shape. */
+@utility rounded-inherit {
+  border-radius: inherit;
+}
+
+/* Hover/focus colour feedback. Plain CSS because a colour change needs no
+   JavaScript; anything that MOVES goes through Framer Motion instead. */
+@utility transition-standard {
+  transition-property: color, background-color, border-color, box-shadow, opacity;
+  transition-duration: var(--duration-fast);
+  transition-timing-function: var(--ease-standard);
+}
+
+/* Anchor links glide to their section, unless the viewer asked for less
+   motion. The scanner has no in-page anchors, so this is inert there. */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
