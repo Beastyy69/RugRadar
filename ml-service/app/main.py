@@ -88,6 +88,12 @@ def health():
     return {"status": "ok"}
 
 
+@app.head("/health")
+def health_head():
+    """Allow uptime monitors that probe health endpoints with HEAD requests."""
+    return {"status": "ok"}
+
+
 @app.get("/chains")
 def chains():
     """
