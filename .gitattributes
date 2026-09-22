@@ -1,0 +1,8 @@
+# Never apply line-ending conversion to binary files. With core.autocrlf on,
+# git would otherwise treat a PDF as text and rewrite LF -> CRLF on checkout,
+# corrupting its internal byte offsets.
+*.pdf  binary
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.ico  binary

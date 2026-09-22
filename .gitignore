@@ -1,0 +1,25 @@
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Python (ml-service)
+__pycache__/
+*.pyc
+venv/
+.venv/
+
+# Node (server/, client/) - added now so teammate doesn't need to redo this later
+node_modules/
+dist/
+build/
+
+# Editor/OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Runtime caches (e.g. Chainabuse lookups) - regenerable, and may hold
+# third-party scam report text.
+ml-service/data/
